@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Simulador visual del autómata celular Regla 110.">
+  <title>Simulador de Regla 110</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172033;
+      background: #f3f5f8;
+      font-synthesis: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: clamp(1rem, 4vw, 3rem);
+    }
+
+    main {
+      width: min(100%, 1100px);
+      margin: 0 auto;
+    }
+
+    h1, h2, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+    }
+
+    .intro, .hint {
+      color: #586174;
+    }
+
+    .panel {
+      margin-top: 1.5rem;
+      padding: clamp(1rem, 3vw, 1.5rem);
+      border: 1px solid #dfe4ec;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 16px rgb(23 32 51 / 5%);
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 0.75rem;
+    }
+
+    .input-group {
+      flex: 1 1 340px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 650;
+    }
+
+    input {
+      width: 100%;
+      min-height: 44px;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #b9c2d0;
+      border-radius: 7px;
+      color: inherit;
+      font: inherit;
+    }
+
+    input:focus-visible, button:focus-visible {
+      outline: 3px solid #96b5ff;
+      outline-offset: 2px;
+    }
+
+    button {
+      min-height: 44px;
+      padding: 0.65rem 1.15rem;
+      border: 0;
+      border-radius: 7px;
+      background: #2456c4;
+      color: #fff;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1948ae;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .hint {
+      margin: 0.6rem 0 0;
+      font-size: 0.9rem;
+    }
+
+    .status {
+      min-height: 1.5rem;
+      margin: 1rem 0 0;
+    }
+
+    .status.error {
+      color: #a32121;
+    }
+
+    .status.success {
+      color: #17643b;
+    }
+
+    .results[hidden] {
+      display: none;
+    }
+
+    .table-scroll, .grid-scroll {
+      overflow: auto;
+      max-width: 100%;
+      border: 1px solid #e3e7ed;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 0.65rem 0.8rem;
+      border-bottom: 1px solid #e8ebf0;
+    }
+
+    th {
+      background: #f7f8fa;
+      font-weight: 650;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td.state {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: 0.08em;
+      white-space: pre;
+    }
+
+    .grid-scroll {
+      padding: 0.8rem;
+    }
+
+    .generation-row {
+      display: grid;
+      grid-template-columns: 4.5rem max-content;
+      align-items: center;
+      gap: 0.75rem;
+      width: max-content;
+      min-width: 100%;
+      padding: 0.3rem 0;
+    }
+
+    .generation-label {
+      color: #586174;
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cells {
+      display: grid;
+      grid-template-columns: repeat(var(--cell-count), 1rem);
+      gap: 2px;
+    }
+
+    .cell {
+      width: 1rem;
+      aspect-ratio: 1;
+      border: 1px solid #d7dce4;
+      border-radius: 2px;
+      background: #f1f3f6;
+    }
+
+    .cell.one {
+      border-color: #172033;
+      background: #172033;
+    }
+
+    @media (max-width: 560px) {
+      form, form button {
+        width: 100%;
+      }
+
+      .generation-row {
+        grid-template-columns: 3.8rem max-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Simulador de Regla 110</h1>
+      <p class="intro">Explora la evolución de la cinta con condiciones de frontera cíclicas.</p>
+    </header>
+
+    <section class="panel" aria-labelledby="input-title">
+      <h2 id="input-title">Entrada</h2>
+      <form id="simulation-form">
+        <div class="input-group">
+          <label for="tape-input">Cinta inicial</label>
+          <input
+            id="tape-input"
+            name="tapeInput"
+            type="text"
+            value="100#000000010000000#"
+            autocomplete="off"
+            spellcheck="false"
+            required>
+          <p class="hint">Formato: K_binario#celdas_binarias# (mínimo 8 celdas).</p>
+        </div>
+        <button id="simulate-button" type="submit">Simular</button>
+      </form>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <div id="results" class="results" hidden>
+      <section class="panel" aria-labelledby="history-title">
+        <h2 id="history-title">Historial de generaciones</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th scope="col">Gen t</th><th scope="col">Estado</th></tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="grid-title">
+        <h2 id="grid-title">Cuadrícula de evolución</h2>
+        <p class="hint">Cada fila representa una generación; oscuro = 1 y claro = 0.</p>
+        <div id="grid" class="grid-scroll" role="img" aria-label="Cuadrícula de generaciones"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const form = document.querySelector("#simulation-form");
+    const input = document.querySelector("#tape-input");
+    const button = document.querySelector("#simulate-button");
+    const status = document.querySelector("#status");
+    const results = document.querySelector("#results");
+    const historyBody = document.querySelector("#history-body");
+    const grid = document.querySelector("#grid");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      status.className = "status";
+      status.textContent = "Simulando…";
+      results.hidden = true;
+      historyBody.replaceChildren();
+      grid.replaceChildren();
+
+      try {
+        const response = await fetch("/api/turing/simulate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tapeInput: input.value })
+        });
+
+        if (!response.ok) {
+          throw new Error(`La API respondió con estado ${response.status}.`);
+        }
+
+        const data = await response.json();
+        if (!data.isValid) {
+          status.className = "status error";
+          status.textContent = data.errorMessage || "La entrada no es válida.";
+          return;
+        }
+
+        renderSteps(data.steps);
+        results.hidden = false;
+        status.className = "status success";
+        status.textContent = `Simulación completada: ${data.steps.length} generaciones.`;
+      } catch (error) {
+        status.className = "status error";
+        status.textContent = error instanceof Error
+          ? `No se pudo completar la simulación: ${error.message}`
+          : "No se pudo completar la simulación.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    function renderSteps(steps) {
+      const historyRows = document.createDocumentFragment();
+      const gridRows = document.createDocumentFragment();
+
+      for (const step of steps) {
+        const tableRow = document.createElement("tr");
+        const generationCell = document.createElement("td");
+        const stateCell = document.createElement("td");
+        generationCell.textContent = step.generation;
+        stateCell.className = "state";
+        stateCell.textContent = step.tapeState;
+        tableRow.append(generationCell, stateCell);
+        historyRows.append(tableRow);
+
+        const row = document.createElement("div");
+        row.className = "generation-row";
+        const label = document.createElement("span");
+        label.className = "generation-label";
+        label.textContent = `t = ${step.generation}`;
+        const cells = document.createElement("div");
+        cells.className = "cells";
+        cells.style.setProperty("--cell-count", step.tapeState.length);
+
+        for (const value of step.tapeState) {
+          const cell = document.createElement("span");
+          cell.className = value === "1" ? "cell one" : "cell";
+          cell.setAttribute("aria-hidden", "true");
+          cells.append(cell);
+        }
+
+        row.append(label, cells);
+        gridRows.append(row);
+      }
+
+      historyBody.append(historyRows);
+      grid.append(gridRows);
+    }
+  </script>
+</body>
+</html>

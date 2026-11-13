@@ -1,0 +1,5 @@
+Caso 1 | entrada=11#00010000# | K=3 | N=8 | generaciones=4 | estado_final=11010000 | resultado=OK
+Caso 2 | entrada=100#000000010000000# | K=4 | N=15 | generaciones=5 | estado_final=000111110000000 | resultado=OK
+Caso 3 | entrada=1110#01101001# | K=14 | N=8 | generaciones=15 | estado_final=01101110 | resultado=OK
+Caso 4 | entrada=1#10000001# | K=1 | N=8 | generaciones=2 | estado_final=10000011 | resultado=OK
+Caso 5 | entrada=101#0000000000# | K=5 | N=10 | generaciones=6 | estado_final=0000000000 | resultado=OK
