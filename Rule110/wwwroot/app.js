@@ -1,4 +1,6 @@
 const API_URL = "/api/turing/simulate";
+const TABLE_URL = "/api/turing/table";
+const THEME_KEY = "regla110-theme";
 const MIN_CELLS = 8;
 const INT32_MAX = 2147483647n;
 
@@ -17,8 +19,22 @@ const historyBody = document.querySelector("#history-body");
 const tapeError = document.querySelector("#tape-error");
 const states = document.querySelector(".states");
 const presetButtons = document.querySelectorAll("[data-preset]");
+const traceToggle = document.querySelector("#trace-toggle");
+const themeToggle = document.querySelector("#theme-toggle");
+const themeLink = document.querySelector("#theme-dark");
+
+const machinePanel = document.querySelector("#machine-panel");
+const machineMeta = document.querySelector("#machine-meta");
+const moduleFilter = document.querySelector("#module-filter");
+const tableSearch = document.querySelector("#table-search");
+const tableBody = document.querySelector("#table-body");
+const tableCount = document.querySelector("#table-count");
+const traceBody = document.querySelector("#trace-body");
+const tapeView = document.querySelector("#tape-view");
 
 let isLoading = false;
+let transitionRows = [];
+let alphabet = null;
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -40,7 +56,8 @@ form.addEventListener("submit", async (event) => {
   status.textContent = "Simulando la cinta…";
 
   try {
-    const response = await fetch(API_URL, {
+    const url = traceToggle.checked ? `${API_URL}?trace=true` : API_URL;
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tapeInput: validation.value })
@@ -61,6 +78,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     renderResults(data.steps);
+    renderMachine(data.machine);
     setView("results");
     status.className = "status is-success";
     status.textContent = `Simulación completada: ${data.steps.length} generaciones.`;
@@ -198,7 +216,7 @@ function renderResults(steps) {
   );
 
   renderGrid(steps, cellCount);
-  renderTable(steps);
+  renderHistoryTable(steps);
 
   grid.setAttribute(
     "aria-label",
@@ -257,7 +275,7 @@ function renderGrid(steps, cellCount) {
   grid.replaceChildren(fragment);
 }
 
-function renderTable(steps) {
+function renderHistoryTable(steps) {
   const fragment = document.createDocumentFragment();
 
   for (const step of steps) {
@@ -272,4 +290,235 @@ function renderTable(steps) {
   }
 
   historyBody.replaceChildren(fragment);
+}
+
+function renderTransitionTable(rows) {
+  const fragment = document.createDocumentFragment();
+
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+    const values = [row.state, row.read, row.write, row.nextState, row.move, row.module];
+
+    values.forEach((value, index) => {
+      const cell = document.createElement("td");
+      cell.className = index === 5 ? "state module" : "state";
+      cell.textContent = value;
+      tr.append(cell);
+    });
+
+    fragment.append(tr);
+  }
+
+  tableBody.replaceChildren(fragment);
+}
+
+function renderFilteredTable() {
+  const module = moduleFilter.value;
+  const term = tableSearch.value.trim().toLowerCase();
+
+  const rows = transitionRows.filter((row) => {
+    if (module && row.module !== module) {
+      return false;
+    }
+
+    if (!term) {
+      return true;
+    }
+
+    return (
+      row.state.toLowerCase().includes(term) ||
+      row.nextState.toLowerCase().includes(term) ||
+      row.module.toLowerCase().includes(term) ||
+      row.read.toLowerCase() === term ||
+      row.write.toLowerCase() === term
+    );
+  });
+
+  renderTransitionTable(rows);
+  tableCount.textContent = `${rows.length} de ${transitionRows.length} transiciones`;
+}
+
+function renderMachine(machine) {
+  if (!machine) {
+    machinePanel.hidden = true;
+    return;
+  }
+
+  machinePanel.hidden = false;
+
+  machineMeta.replaceChildren(
+    createStat("Estado final", machine.finalState),
+    createStat("Pasos", String(machine.steps)),
+    createStat("Generaciones", String(machine.generations)),
+    createStat("Transiciones δ", String(transitionRows.length))
+  );
+
+  renderTrace(machine.trace);
+  renderTape(machine.tape);
+}
+
+function renderTrace(trace) {
+  if (!Array.isArray(trace) || trace.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 7;
+    cell.className = "empty-cell";
+    cell.textContent = "Activá “Incluir traza paso a paso de la máquina” para ver el detalle.";
+    row.append(cell);
+    traceBody.replaceChildren(row);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  for (const step of trace) {
+    const tr = document.createElement("tr");
+    const values = [
+      step.step,
+      step.state,
+      step.headPosition,
+      step.readSymbol,
+      step.writtenSymbol,
+      step.move,
+      step.nextState
+    ];
+
+    values.forEach((value, index) => {
+      const cell = document.createElement("td");
+      cell.className = index === 1 || index === 6 ? "state" : "state state--num";
+      cell.textContent = value;
+      tr.append(cell);
+    });
+
+    fragment.append(tr);
+  }
+
+  traceBody.replaceChildren(fragment);
+}
+
+function renderTape(tape) {
+  if (!Array.isArray(tape) || tape.length === 0) {
+    tapeView.replaceChildren();
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  for (const cell of tape) {
+    const item = document.createElement("span");
+    item.className = "tape-cell";
+
+    const symbol = document.createElement("span");
+    symbol.className = "tape-cell__symbol";
+    symbol.textContent = cell.symbol === " " ? "·" : cell.symbol;
+
+    const position = document.createElement("span");
+    position.className = "tape-cell__position";
+    position.textContent = cell.position;
+
+    item.append(symbol, position);
+    fragment.append(item);
+  }
+
+  tapeView.replaceChildren(fragment);
+}
+
+async function loadTransitionTable() {
+  try {
+    const response = await fetch(TABLE_URL);
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+    transitionRows = Array.isArray(data.rows) ? data.rows : [];
+
+    const modules = [...new Set(transitionRows.map((row) => row.module))];
+    for (const module of modules) {
+      const option = document.createElement("option");
+      option.value = module;
+      option.textContent = module;
+      moduleFilter.append(option);
+    }
+
+    renderFilteredTable();
+  } catch {
+    transitionRows = [];
+  }
+}
+
+moduleFilter.addEventListener("change", renderFilteredTable);
+tableSearch.addEventListener("input", renderFilteredTable);
+
+const parameters = new URLSearchParams(window.location.search);
+const sharedTape = parameters.get("tape");
+const requestedTheme = parameters.get("theme");
+
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+function readStoredTheme() {
+  try {
+    return window.localStorage.getItem(THEME_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function storeTheme(theme) {
+  try {
+    window.localStorage.setItem(THEME_KEY, theme);
+  } catch {
+    /* el navegador puede bloquear el almacenamiento local: no es crítico */
+  }
+}
+
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+
+  themeLink.media = isDark ? "all" : "not all";
+  document.documentElement.style.colorScheme = theme;
+  themeToggle.classList.toggle("is-dark", isDark);
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+  themeToggle.setAttribute(
+    "aria-label",
+    isDark ? "Activar el modo claro" : "Activar el modo oscuro"
+  );
+}
+
+function currentTheme() {
+  const stored = readStoredTheme();
+
+  if (stored === "dark" || stored === "light") {
+    return stored;
+  }
+
+  return prefersDark.matches ? "dark" : "light";
+}
+
+applyTheme(requestedTheme === "dark" || requestedTheme === "light" ? requestedTheme : currentTheme());
+
+themeToggle.addEventListener("click", () => {
+  const theme = currentTheme() === "dark" ? "light" : "dark";
+  applyTheme(theme);
+  storeTheme(theme);
+});
+
+prefersDark.addEventListener("change", () => {
+  if (!readStoredTheme()) {
+    applyTheme(currentTheme());
+  }
+});
+
+if (sharedTape) {
+  input.value = sharedTape;
+}
+
+if (parameters.get("trace") === "1") {
+  traceToggle.checked = true;
+}
+
+loadTransitionTable();
+
+if (sharedTape && parameters.get("auto") === "1") {
+  form.requestSubmit();
 }

@@ -1,5 +1,27 @@
-Caso 1 | entrada=11#00010000# | K=3 | N=8 | generaciones=4 | estado_final=11010000 | resultado=OK
-Caso 2 | entrada=100#000000010000000# | K=4 | N=15 | generaciones=5 | estado_final=000111110000000 | resultado=OK
-Caso 3 | entrada=1110#01101001# | K=14 | N=8 | generaciones=15 | estado_final=01101110 | resultado=OK
-Caso 4 | entrada=1#10000001# | K=1 | N=8 | generaciones=2 | estado_final=10000011 | resultado=OK
-Caso 5 | entrada=101#0000000000# | K=5 | N=10 | generaciones=6 | estado_final=0000000000 | resultado=OK
+Caso 0 | Verificación cruzada Máquina de Turing vs. implementación de referencia | casos_aleatorios=100 | semilla=20260916 | resultado=OK
+Caso 1 | entrada=11#000100# | K=3 | N=6 | generaciones=4 | estado_final=110100 | pasos_MT=699 | resultado=OK | Ejemplo del enunciado: 000100 -> 001100 -> 011100 -> 110100.
+Caso 2 | entrada=100#000000010000000# | K=4 | N=15 | generaciones=5 | estado_final=000111110000000 | pasos_MT=3191 | resultado=OK | Ejemplo del enunciado (K = 4).
+Caso 3 | entrada=1110#01101001# | K=14 | N=8 | generaciones=15 | estado_final=01101110 | pasos_MT=6229 | resultado=OK | Ejemplo del enunciado (K = 14).
+Caso 4 | entrada=0#00000000# | K=0 | N=8 | generaciones=1 | estado_final=00000000 | pasos_MT=37 | resultado=OK | K = 0: la máquina se detiene sin calcular generaciones.
+Caso 5 | entrada=1#00000000# | K=1 | N=8 | generaciones=2 | estado_final=00000000 | pasos_MT=323 | resultado=OK | K = 1 sobre una cinta uniforme de ceros.
+Caso 6 | entrada=1#11111111# | K=1 | N=8 | generaciones=2 | estado_final=00000000 | pasos_MT=323 | resultado=OK | Cinta uniforme de unos (111 -> 0).
+Caso 7 | entrada=101#11111111# | K=5 | N=8 | generaciones=6 | estado_final=00000000 | pasos_MT=1739 | resultado=OK | Cinta uniforme de unos con 5 pasos: se estabiliza en ceros.
+Caso 8 | entrada=1#00000001# | K=1 | N=8 | generaciones=2 | estado_final=00000011 | pasos_MT=323 | resultado=OK | Un único 1: propagación del borde cíclico.
+Caso 9 | entrada=1000#01010101# | K=8 | N=8 | generaciones=9 | estado_final=00000000 | pasos_MT=3055 | resultado=OK | Patrón periódico alternado (período 2).
+Caso 10 | entrada=11#00010000# | K=3 | N=8 | generaciones=4 | estado_final=11010000 | pasos_MT=979 | resultado=OK | Ejemplo del enunciado extendido a N = 8.
+Caso 11 | entrada=1#10101010# | K=1 | N=8 | generaciones=2 | estado_final=11111111 | pasos_MT=323 | resultado=OK | Patrón alternado: cada vecindad 101 o 010 produce 1.
+Caso 12 | entrada=110#000000010000000100000001# | K=6 | N=24 | generaciones=7 | estado_final=011100110111001101110011 | pasos_MT=10335 | resultado=OK | Tres 1 separados en una cinta de 24 celdas.
+Caso 13 | entrada=1000#110011001100110011001100# | K=8 | N=24 | generaciones=9 | estado_final=011101110111011101110111 | pasos_MT=14223 | resultado=OK | Patrón de período 4 en una cinta de 24 celdas.
+Caso 14 | entrada=1111#000100010001000100010001# | K=15 | N=24 | generaciones=16 | estado_final=110111011101110111011101 | pasos_MT=29427 | resultado=OK | Configuración caótica de 24 celdas.
+Caso 15 | entrada=100000#00000000000000000000000000000001# | K=32 | N=32 | generaciones=33 | estado_final=01111110110111110101101000011111 | pasos_MT=118355 | resultado=OK | Cinta de 32 celdas con un único 1 y 32 pasos.
+Caso 16 | entrada=1010#0110100110010110100110010110# | K=10 | N=28 | generaciones=11 | estado_final=1111101111101001101111101110 | pasos_MT=23465 | resultado=OK | Configuración pseudoaleatoria de 28 celdas.
+Caso 17 | entrada=1#1111111100000000# | K=1 | N=16 | generaciones=2 | estado_final=1000000100000001 | pasos_MT=851 | resultado=OK | Dos bloques uniforme: verificación de la frontera cíclica.
+Caso 18 | entrada=11#00000000000000000000000000000001# | K=3 | N=32 | generaciones=4 | estado_final=00000000000000000000000000001101 | pasos_MT=8083 | resultado=OK | Cinta de 32 celdas con un único 1 en el extremo.
+Caso 19 | entrada=111#0110100110010110100110010110# | K=7 | N=28 | generaciones=8 | estado_final=1110111110111010111110111011 | pasos_MT=15769 | resultado=OK | Configuración caótica de 28 celdas con 7 pasos.
+Caso 20 | entrada=10#1010101010101010101010101010# | K=2 | N=28 | generaciones=3 | estado_final=0000000000000000000000000000 | pasos_MT=4245 | resultado=OK | Patrón periódico alternado de 28 celdas con 2 pasos.
+Caso 21 | entrada=100#0101# | resultado=OK (entrada rechazada: La cinta debe contener al menos 8 celdas.) | N < 8: la consigna exige al menos 8 celdas.
+Caso 22 | entrada=10#0000000A# | resultado=OK (entrada rechazada: Las celdas deben contener solo 0 y 1.) | Celda no binaria.
+Caso 23 | entrada=1O#00000000# | resultado=OK (entrada rechazada: K debe ser un entero binario no vacío.) | K no binario.
+Caso 24 | entrada=100## | resultado=OK (entrada rechazada: La cinta debe contener al menos una celda.) | Segmentos vacíos.
+Caso 25 | entrada=100#00000000 | resultado=OK (entrada rechazada: El formato debe ser K_binario#celdas_binarias#.) | Falta el delimitador final.
+Caso 26 | entrada=11111111111111111111111111111111#00000000# | resultado=OK (entrada rechazada: Arithmetic operation resulted in an overflow.) | K fuera del rango de Int32.

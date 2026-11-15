@@ -1,0 +1,52 @@
+/*
+ * Paleta del modo oscuro.
+ *
+ * Se carga como hoja de estilos alternativa: el atributo `media` del <link> la
+ * habilita cuando el sistema operativa está en modo oscuro y el usuario no ha
+ * forzado el modo claro. `app.js` conmuta ese atributo para respetar la
+ * preferencia explícita del usuario.
+ *
+ * El alcance es `screen` a propósito: al imprimir siempre se usa la paleta
+ * clara de `styles.css`.
+ */
+@media screen {
+  :root {
+    --paper: #14130f;
+    --paper-raised: #1e1c15;
+    --ink: #f0ebdd;
+    --ink-2: #c3bca9;
+    --ink-3: #97907d;
+    --rule: #302d23;
+    --rule-strong: #514c3c;
+    --blue: #8fbde8;
+    --blue-deep: #b7d6f1;
+    --amber: #e3a75f;
+    --error: #e28071;
+    --success: #74c99b;
+    --on-accent: #10130f;
+    --on-accent-muted: rgb(16 19 15 / 35%);
+    --grid-line: rgb(240 235 221 / 4%);
+    --glow: rgb(143 189 232 / 10%);
+    --surface-veil: rgb(30 28 21 / 72%);
+    --accent-veil: rgb(143 189 232 / 12%);
+    --accent-outline: rgb(143 189 232 / 55%);
+    --error-veil: rgb(226 128 113 / 12%);
+    --amber-veil: rgb(227 167 95 / 45%);
+    --ink-veil: rgb(240 235 221 / 8%);
+  }
+
+  .theme-toggle {
+    border-color: var(--rule-strong);
+    color: var(--ink-2);
+    background: var(--paper-raised);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .masthead__title {
+    text-shadow: 0 1px 0 rgb(0 0 0 / 25%);
+  }
+}

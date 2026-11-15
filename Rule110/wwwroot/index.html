@@ -8,6 +8,7 @@
   <title>Regla 110 · Simulador de Máquina de Turing</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme-dark.css" media="(prefers-color-scheme: dark)" id="theme-dark">
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -26,47 +27,80 @@
           <li><span>Salida</span> K + 1 generaciones</li>
         </ul>
       </div>
-      <div class="motif" aria-hidden="true">
-        <svg viewBox="20 0 80 72" role="presentation" focusable="false">
-          <g fill="currentColor">
-            <rect x="88" y="0" width="6" height="6"/>
-            <rect x="80" y="8" width="6" height="6"/>
-            <rect x="88" y="8" width="6" height="6"/>
-            <rect x="72" y="16" width="6" height="6"/>
-            <rect x="80" y="16" width="6" height="6"/>
-            <rect x="88" y="16" width="6" height="6"/>
-            <rect x="64" y="24" width="6" height="6"/>
-            <rect x="72" y="24" width="6" height="6"/>
-            <rect x="88" y="24" width="6" height="6"/>
-            <rect x="56" y="32" width="6" height="6"/>
-            <rect x="64" y="32" width="6" height="6"/>
-            <rect x="72" y="32" width="6" height="6"/>
-            <rect x="80" y="32" width="6" height="6"/>
-            <rect x="88" y="32" width="6" height="6"/>
-            <rect x="48" y="40" width="6" height="6"/>
-            <rect x="56" y="40" width="6" height="6"/>
-            <rect x="88" y="40" width="6" height="6"/>
-            <rect x="40" y="48" width="6" height="6"/>
-            <rect x="48" y="48" width="6" height="6"/>
-            <rect x="56" y="48" width="6" height="6"/>
-            <rect x="80" y="48" width="6" height="6"/>
-            <rect x="88" y="48" width="6" height="6"/>
-            <rect x="32" y="56" width="6" height="6"/>
-            <rect x="40" y="56" width="6" height="6"/>
-            <rect x="56" y="56" width="6" height="6"/>
-            <rect x="72" y="56" width="6" height="6"/>
-            <rect x="80" y="56" width="6" height="6"/>
-            <rect x="88" y="56" width="6" height="6"/>
-            <rect x="24" y="64" width="6" height="6"/>
-            <rect x="32" y="64" width="6" height="6"/>
-            <rect x="40" y="64" width="6" height="6"/>
-            <rect x="48" y="64" width="6" height="6"/>
-            <rect x="56" y="64" width="6" height="6"/>
-            <rect x="64" y="64" width="6" height="6"/>
-            <rect x="72" y="64" width="6" height="6"/>
-            <rect x="88" y="64" width="6" height="6"/>
-          </g>
-        </svg>
+      <div class="masthead__aside">
+        <button
+          id="theme-toggle"
+          class="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Activar el modo oscuro">
+          <svg
+            class="theme-toggle__icon theme-toggle__icon--sun"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            aria-hidden="true"
+            focusable="false">
+            <circle cx="12" cy="12" r="4.2" />
+            <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" />
+          </svg>
+          <svg
+            class="theme-toggle__icon theme-toggle__icon--moon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false">
+            <path d="M20 14.2A8.4 8.4 0 1 1 9.8 4a6.9 6.9 0 0 0 10.2 10.2Z" />
+          </svg>
+        </button>
+
+        <div class="motif" aria-hidden="true">
+          <svg viewBox="20 0 80 72" role="presentation" focusable="false">
+            <g fill="currentColor">
+              <rect x="88" y="0" width="6" height="6"/>
+              <rect x="80" y="8" width="6" height="6"/>
+              <rect x="88" y="8" width="6" height="6"/>
+              <rect x="72" y="16" width="6" height="6"/>
+              <rect x="80" y="16" width="6" height="6"/>
+              <rect x="88" y="16" width="6" height="6"/>
+              <rect x="64" y="24" width="6" height="6"/>
+              <rect x="72" y="24" width="6" height="6"/>
+              <rect x="88" y="24" width="6" height="6"/>
+              <rect x="56" y="32" width="6" height="6"/>
+              <rect x="64" y="32" width="6" height="6"/>
+              <rect x="72" y="32" width="6" height="6"/>
+              <rect x="80" y="32" width="6" height="6"/>
+              <rect x="88" y="32" width="6" height="6"/>
+              <rect x="48" y="40" width="6" height="6"/>
+              <rect x="56" y="40" width="6" height="6"/>
+              <rect x="88" y="40" width="6" height="6"/>
+              <rect x="40" y="48" width="6" height="6"/>
+              <rect x="48" y="48" width="6" height="6"/>
+              <rect x="56" y="48" width="6" height="6"/>
+              <rect x="80" y="48" width="6" height="6"/>
+              <rect x="88" y="48" width="6" height="6"/>
+              <rect x="32" y="56" width="6" height="6"/>
+              <rect x="40" y="56" width="6" height="6"/>
+              <rect x="56" y="56" width="6" height="6"/>
+              <rect x="72" y="56" width="6" height="6"/>
+              <rect x="80" y="56" width="6" height="6"/>
+              <rect x="88" y="56" width="6" height="6"/>
+              <rect x="24" y="64" width="6" height="6"/>
+              <rect x="32" y="64" width="6" height="6"/>
+              <rect x="40" y="64" width="6" height="6"/>
+              <rect x="48" y="64" width="6" height="6"/>
+              <rect x="56" y="64" width="6" height="6"/>
+              <rect x="64" y="64" width="6" height="6"/>
+              <rect x="88" y="64" width="6" height="6"/>
+            </g>
+          </svg>
+        </div>
       </div>
     </header>
 
@@ -97,6 +131,13 @@
               <button type="button" class="chip" data-preset="100#000000010000000#">Caso base</button>
               <button type="button" class="chip" data-preset="1110#01101001#">14 pasos</button>
               <button type="button" class="chip" data-preset="010#0010100#">Validación inválida</button>
+            </div>
+
+            <div class="field field--check">
+              <label class="check">
+                <input id="trace-toggle" name="trace" type="checkbox" />
+                <span>Incluir traza paso a paso de la máquina</span>
+              </label>
             </div>
 
             <button id="simulate-button" class="button" type="submit">
@@ -239,6 +280,70 @@
             </div>
           </details>
         </div>
+
+        <section class="machine" id="machine-panel" aria-labelledby="machine-title" hidden>
+          <div class="figure__caption">
+            <span class="figure__index">04</span>
+            <span id="machine-title">Máquina de Turing</span>
+          </div>
+
+          <dl id="machine-meta" class="stats stats--machine"></dl>
+
+          <details class="states" id="table-details" open>
+            <summary>Tabla de transiciones δ</summary>
+            <div class="table-toolbar">
+              <label class="visually-hidden" for="module-filter">Filtrar por módulo</label>
+              <select id="module-filter">
+                <option value="">Todos los módulos</option>
+              </select>
+              <label class="visually-hidden" for="table-search">Buscar en la tabla</label>
+              <input id="table-search" type="search" placeholder="Buscar estado o símbolo…" autocomplete="off" />
+              <span id="table-count" class="table-toolbar__count" aria-live="polite"></span>
+            </div>
+            <div class="table-scroll table-scroll--tall">
+              <table>
+                <caption class="visually-hidden">Tabla de transiciones de la Máquina de Turing</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Lee</th>
+                    <th scope="col">Escribe</th>
+                    <th scope="col">Estado siguiente</th>
+                    <th scope="col">Mov.</th>
+                    <th scope="col">Módulo</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+          </details>
+
+          <details class="states" id="trace-details">
+            <summary>Traza de ejecución</summary>
+            <div class="table-scroll table-scroll--tall">
+              <table>
+                <caption class="visually-hidden">Traza paso a paso de la Máquina de Turing</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Paso</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Cabeza</th>
+                    <th scope="col">Lee</th>
+                    <th scope="col">Escribe</th>
+                    <th scope="col">Mov.</th>
+                    <th scope="col">Estado siguiente</th>
+                  </tr>
+                </thead>
+                <tbody id="trace-body"></tbody>
+              </table>
+            </div>
+          </details>
+
+          <details class="states" id="tape-details">
+            <summary>Cinta final</summary>
+            <div class="tape-view" id="tape-view"></div>
+          </details>
+        </section>
       </section>
     </main>
 
